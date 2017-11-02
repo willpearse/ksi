@@ -1,7 +1,8 @@
 ksi <- function(tree, dat, depth=10, test=NULL,
                 verbose=TRUE,
                 multicore=FALSE,
-                multicore.args=list()) {
+                multicore.args=list(),
+                everything=FALSE) {
   if ( multicore ) {
     if ( !require("multicore") )
       stop("The 'multicore' package is needed to use multicore=TRUE")
@@ -44,7 +45,7 @@ ksi <- function(tree, dat, depth=10, test=NULL,
     if ( verbose )
       cat(sprintf("depth = %d...", i))
 
-    tests <- loop(possible, test.ksi, tree, dat, group, base, test)
+    tests <- loop(possible, test.ksi, tree, dat, group, base, test, everything)
 
     stat <- sapply(tests, "[[", "statistic")
 
@@ -81,13 +82,19 @@ ksi <- function(tree, dat, depth=10, test=NULL,
 }
 
 ## This tests one node of the tree.
-test.ksi <- function(node, tree, dat, group, base, test) {
+test.ksi <- function(node, tree, dat, group, base, test, everything=FALSE) {
   tmp <- classify.by.splits(tree, node, group, base)
   base.type <- tmp$base[length(tmp$base)]
 
   tip.type <- tmp$group[match(seq_along(tree$tip.label), tree$edge[, 2])]
   d.n <- dat[tip.type == base.type]
-  d.t <- dat[tip.type == max(tip.type)]
+  if(everything){
+      # Hack to make this work for a whole-tree comparison
+      d.t <- dat[tip.type != base.type]
+  } else {
+      d.t <- dat[tip.type == max(tip.type)]
+  }
+      
   n <- c(length(d.n), length(d.t))
 
   if ( test == "ks" ) {

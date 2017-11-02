@@ -69,6 +69,12 @@
     \code{multicore.args=list(mc.cores=4, mc.preschedule=FALSE)}
     specifies that \code{mclapply} should use 4 cores, and use its
     load-balancing algorithm.}
+
+  \item{everything}{Whether to perform Chi-squared test in comparison
+    with all other species in the tree (default: \code{FALSE}). This is
+    something for a working group with a specific aim; you almost
+    certainly don't want to set this to \code{TRUE} unless you really (think
+    you) know what you're doing...}
 }
 
 \value{%
